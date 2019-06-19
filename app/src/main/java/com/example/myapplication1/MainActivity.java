@@ -14,6 +14,7 @@ import com.google.ar.sceneform.rendering.Color;
 import com.google.ar.sceneform.rendering.MaterialFactory;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.ShapeFactory;
+import com.google.ar.sceneform.rendering.ViewRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
 
@@ -21,12 +22,15 @@ public class MainActivity extends AppCompatActivity {
 
     private ArFragment arFragment;
     private ModelRenderable sphereRenderable;
+    private ViewRenderable calendarViewRenderable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ViewRenderable.builder().setView(this,R.layout.calendar_view).build()
+                .thenAccept(viewRenderable -> calendarViewRenderable = viewRenderable);
         arFragment = (ArFragment)getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
 
         MaterialFactory.makeOpaqueWithColor(this,new Color(android.graphics.Color.BLUE))
@@ -54,6 +58,13 @@ public class MainActivity extends AppCompatActivity {
                 sphere.setParent(anchorNode);
                 sphere.setRenderable(sphereRenderable);
                 sphere.select();
+
+                //Create a Calendar TransformableNode
+                TransformableNode calendar = new TransformableNode(arFragment.getTransformationSystem());
+                calendar.setParent(anchorNode);
+                calendar.setRenderable(calendarViewRenderable);
+                calendar.setLocalPosition(new Vector3(0.0f,0.5f,0.0f));
+                calendar.select();
             }
         );
     }
